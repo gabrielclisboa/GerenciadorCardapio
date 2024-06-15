@@ -14,5 +14,11 @@
             this.custo = custo;
             this.lucro = lucro;
         }
-    }
+
+		public Prato(Prato original) {
+			this.indice = original.indice;
+			this.custo = original.custo;
+			this.lucro = original.lucro;
+		}
+	}
 }

@@ -16,6 +16,13 @@ namespace GerenciadorDeCardapio {
 			this.pratos = pratos;
 		}
 
+		public CasosTeste(CasosTeste original) {
+			this.numDias = original.numDias;
+			this.numPratos = original.numPratos;
+			this.orcamento = original.orcamento;
+			this.pratos = new List<Prato>(original.pratos.Select(p => new Prato(p)).ToList());
+		}
 
-    }
+
+	}
 }
