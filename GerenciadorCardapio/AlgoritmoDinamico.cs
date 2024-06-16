@@ -7,9 +7,12 @@ namespace GerenciadorCardapio {
             for(int c = 0; c < casosTeste.Count; c++){
                 casosTeste[c].pratos = casosTeste[c].pratos.OrderByDescending(v => v.custo).ToList(); // ordenando os pratos em ordem decrescente de custo
                 string[,] matriz = criarMatrizDinamica(casosTeste[c].orcamento, casosTeste[c].pratos);
-                
+
                 for(int i = 2; i < matriz.GetLength(0); i++){
                     for(int j = 1; j < matriz.GetLength(1); j++){
+                        if(j <= 2 && i == 2){           
+
+                        }
                         if(j < matriz.GetLength(1) - 1){
                             if(j - casosTeste[c].pratos[i - 2].custo >= 0){
                                 matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, false);
@@ -291,6 +294,7 @@ namespace GerenciadorCardapio {
                 }
                 Console.WriteLine();
             }
+            Console.WriteLine();
         }
     }
 }
