@@ -5,7 +5,7 @@ namespace GerenciadorCardapio {
         public static void processaCasoTesteDinamico(List<CasosTeste> casosTeste)
         {
             for(int c = 0; c < casosTeste.Count; c++){
-                casosTeste[c].pratos = casosTeste[c].pratos.OrderByDescending(v => v.custo).ToList();
+                casosTeste[c].pratos = casosTeste[c].pratos.OrderByDescending(v => v.custo).ToList(); // ordenando os pratos em ordem decrescente de custo
                 string[,] matriz = criarMatrizDinamica(casosTeste[c].orcamento, casosTeste[c].pratos);
 
                 for(int i = 2; i < matriz.GetLength(0); i++){
@@ -76,8 +76,14 @@ namespace GerenciadorCardapio {
             if(parteDecimal(celula[numeroPrato + 1]) == 0 && diasPrevistos(celula) < numDias){
                 celula[0] += prato.lucro;
                 celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
+            }else if(parteDecimal(celula[numeroPrato + 1]) == 1 && diasPrevistos(celula) < numDias && 2 <= (int)numDias/2 + 1){
+                celula[0] += prato.lucro;
+                celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
             }else if(parteDecimal(celula[numeroPrato + 1]) == 1 && diasPrevistos(celula) < numDias){
                 celula[0] += prato.lucro / 2;
+                celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
+            }else if(parteDecimal(celula[numeroPrato + 1]) == 2 && diasPrevistos(celula) < numDias && 3 <= (int)numDias/2 + 1){
+                celula[0] += prato.lucro;
                 celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
             }else if(diasPrevistos(celula) < numDias){
                 celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
@@ -129,19 +135,61 @@ namespace GerenciadorCardapio {
             List<Prato> resultado = new List<Prato>();
 
             for(int i = 1; i < celulaValores.Length; i++){
-                if(parteDecimal(celulaValores[i]) == 1){
-                    resultado.Add(pratos[i - 1]);
-                }else if(parteDecimal(celulaValores[i]) == 2){
-                    resultado.Add(pratos[i - 1]);
-                    resultado.Add(pratos[i - 1]);
-                }
-                else if(parteDecimal(celulaValores[i]) == 3){
-                    resultado.Add(pratos[i - 1]);
-                    resultado.Add(pratos[i - 1]);
+                for(int j = 0; j < (int)parteDecimal(celulaValores[i]); j++){
                     resultado.Add(pratos[i - 1]);
                 }
             }
 
+            return IntercalarPratos(resultado);
+        }
+
+        public static List<Prato> IntercalarPratos(List<Prato> pratos)
+        {
+            // Lista resultante
+            List<Prato> resultado = new List<Prato>();
+            
+            // Dicionário para contar a frequência de cada índice
+            var contagemindices = new Dictionary<int, int>();
+            foreach (var prato in pratos)
+            {
+                if (!contagemindices.ContainsKey(prato.indice))
+                {
+                    contagemindices[prato.indice] = 0;
+                }
+                contagemindices[prato.indice]++;
+            }
+            
+            // Lista de pares (indice, frequência) ordenada pela frequência decrescente
+            var listaContagem = contagemindices.OrderByDescending(kv => kv.Value).ToList();
+            
+            // Alternar os pratos
+            while (pratos.Count > 0)
+            {
+                bool inserido = false;
+                foreach (var item in listaContagem)
+                {
+                    int indice = item.Key;
+                    if (contagemindices[indice] > 0 && (resultado.Count == 0 || resultado.Last().indice != indice))
+                    {
+                        var prato = pratos.First(p => p.indice == indice);
+                        resultado.Add(prato);
+                        pratos.Remove(prato);
+                        contagemindices[indice]--;
+                        inserido = true;
+                        break;
+                    }
+                }
+                
+                // Se não foi possível inserir nenhum prato de forma intercalada, inserir o próximo disponível
+                if (!inserido)
+                {
+                    var prato = pratos[0];
+                    resultado.Add(prato);
+                    pratos.RemoveAt(0);
+                    contagemindices[prato.indice]--;
+                }
+            }
+            
             return resultado;
         }
 
