@@ -10,13 +10,22 @@ namespace GerenciadorCardapio {
 
                 for(int i = 2; i < matriz.GetLength(0); i++){
                     for(int j = 1; j < matriz.GetLength(1); j++){
-                        if(j - casosTeste[c].pratos[i - 2].custo >= 0){
-                            matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias);
+                        if(j < matriz.GetLength(1) - 1){
+                            if(j - casosTeste[c].pratos[i - 2].custo >= 0){
+                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, false);
+                            }else{
+                                matriz[i, j] = matriz[i - 1, j];
+                            }
                         }else{
-                            matriz[i, j] = matriz[i - 1, j];
+                            if(j - casosTeste[c].pratos[i - 2].custo >= 0){
+                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, true);
+                            }else{
+                                matriz[i, j] = matriz[i - 1, j];
+                            }
                         }
                     }
                 }
+
                 List<Prato> menu = obtemMenu(matriz[matriz.GetLength(0) - 1, matriz.GetLength(1) - 1], casosTeste[c].pratos);
                 double lucro = obtemLucro(matriz[matriz.GetLength(0) - 1, matriz.GetLength(1) - 1]);
                 exibirMenuMetodoDinamico(lucro, menu, c);
@@ -47,7 +56,7 @@ namespace GerenciadorCardapio {
             return resultado;
         }
 
-        static string melhorValorEntre(string primeiraCelula, string segundaCelula, double lucro, int numeroPrato, List<Prato> pratos, int numDias){
+        static string melhorValorEntre(string primeiraCelula, string segundaCelula, double lucro, int numeroPrato, List<Prato> pratos, int numDias, bool ultima){
             string[] primeiraCelulaDividida = primeiraCelula.Split("-");
             string[] segundaCelulaDividida = segundaCelula.Split("-");
 
@@ -55,7 +64,19 @@ namespace GerenciadorCardapio {
             double[] segundaCelulaValores = paraDouble(segundaCelulaDividida);
             double[] segundaCelulaComLucroDinamico = lucroDinamico(segundaCelulaValores, numeroPrato, pratos, numDias, lucro);
 
-            if(primeiraCelulaValores[0] < segundaCelulaComLucroDinamico[0]){
+            if(ultima == true && diasPrevistos(primeiraCelulaValores) == numDias && diasPrevistos(segundaCelulaComLucroDinamico) == numDias){
+                if(primeiraCelulaValores[0] < segundaCelulaComLucroDinamico[0]){
+                    return paraString(segundaCelulaComLucroDinamico);
+                }else{
+                   return primeiraCelula; 
+                }
+            }else if(ultima == true && diasPrevistos(primeiraCelulaValores) == numDias){
+                return primeiraCelula;
+            }else if(ultima == true && diasPrevistos(segundaCelulaComLucroDinamico) == numDias){
+                return paraString(segundaCelulaComLucroDinamico);
+            }else if(ultima == true){
+                return geraCelulaBase(pratos);
+            }else if(primeiraCelulaValores[0] < segundaCelulaComLucroDinamico[0]){
                 return paraString(segundaCelulaComLucroDinamico);
             }else{
                 return primeiraCelula;
