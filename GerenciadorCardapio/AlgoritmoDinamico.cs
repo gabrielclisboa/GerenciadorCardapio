@@ -7,7 +7,7 @@ namespace GerenciadorCardapio {
             for(int c = 0; c < casosTeste.Count; c++){
                 casosTeste[c].pratos = casosTeste[c].pratos.OrderByDescending(v => v.custo).ToList(); // ordenando os pratos em ordem decrescente de custo
                 string[,] matriz = criarMatrizDinamica(casosTeste[c].orcamento, casosTeste[c].pratos);
-
+                
                 for(int i = 2; i < matriz.GetLength(0); i++){
                     for(int j = 1; j < matriz.GetLength(1); j++){
                         if(j < matriz.GetLength(1) - 1){
@@ -94,24 +94,67 @@ namespace GerenciadorCardapio {
         
         static double[] lucroDinamico(double[] celula, int numeroPrato, List<Prato> pratos, int numDias, double lucroAcumulado){
             Prato prato = pratos[numeroPrato];
-            if(parteDecimal(celula[numeroPrato + 1]) == 0 && diasPrevistos(celula) < numDias){
-                celula[0] += prato.lucro;
-                celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
-            }else if(parteDecimal(celula[numeroPrato + 1]) == 1 && diasPrevistos(celula) < numDias && 2 <= (int)numDias/2 + 1){
-                celula[0] += prato.lucro;
-                celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
-            }else if(parteDecimal(celula[numeroPrato + 1]) == 1 && diasPrevistos(celula) < numDias){
-                celula[0] += prato.lucro / 2;
-                celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
-            }else if(parteDecimal(celula[numeroPrato + 1]) == 2 && diasPrevistos(celula) < numDias && 3 <= (int)numDias/2 + 1){
-                celula[0] += prato.lucro;
-                celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
-            }else if(diasPrevistos(celula) < numDias){
+
+            if(diasPrevistos(celula) < numDias){
+                List<Prato> pratosUsados = celulaParaLista(paraString(celula), pratos);
+                pratosUsados.Add(prato);
+                List<Prato> listaComOPrato = IntercalarPratos(pratosUsados);
+                double lucro = calculaLucroDaSequencia(listaComOPrato);
+                celula[0] = lucro;
                 celula[numeroPrato + 1] = Math.Round(celula[numeroPrato + 1] + 0.1, 1);
             }
 
             return celula;
         }
+
+        public static double calculaLucroDaSequencia(List<Prato> pratos){
+            if(pratos.Count == 1){
+                return pratos[0].lucro;
+            }
+            double resultado = pratos[0].lucro;
+            resultado += pratos[1].custo == pratos[0].custo ? pratos[1].lucro / 2 : pratos[1].lucro;
+            for(int i = 2; i < pratos.Count; i++){
+                if(pratos[i].custo == pratos[i - 1].custo && pratos[i].custo == pratos[i - 2].custo){
+                    resultado += 0;
+                }else if(pratos[i].custo == pratos[i - 1].custo){
+                    resultado += pratos[i].lucro / 2;
+                }else{
+                    resultado += pratos[i].lucro; 
+                }
+            }
+            return resultado;
+        }
+
+        public static List<Prato> celulaParaLista(string celula, List<Prato> pratos)
+        {
+            var resultado = new List<Prato>();
+            var pares = celula.Split('-');
+
+            // O primeiro elemento é o total e pode ser ignorado
+            for (int i = 1; i < pares.Length; i++)
+            {
+                var y_qy = pares[i].Split(',');
+
+                if (y_qy.Length == 2)
+                {
+                    int custo = int.Parse(y_qy[0]);
+                    int quantidade = int.Parse(y_qy[1]);
+
+                    var prato = pratos.FirstOrDefault(p => p.custo == custo);
+
+                    if (prato != null)
+                    {
+                        for (int j = 0; j < quantidade; j++)
+                        {
+                            resultado.Add(prato);
+                        }
+                    }
+                }
+            }
+
+            return resultado;
+        }
+
 
         static int parteDecimal(double numero)
         {
@@ -166,51 +209,49 @@ namespace GerenciadorCardapio {
 
         public static List<Prato> IntercalarPratos(List<Prato> pratos)
         {
-            // Lista resultante
-            List<Prato> resultado = new List<Prato>();
-            
-            // Dicionário para contar a frequência de cada índice
-            var contagemindices = new Dictionary<int, int>();
-            foreach (var prato in pratos)
+            // Ordena os pratos pelo custo
+            var pratosOrdenados = pratos.OrderBy(p => p.custo).ToList();
+
+            // Cria uma lista para armazenar o resultado final
+            var resultado = new List<Prato>();
+
+            // Agrupa os pratos pelo custo
+            var grupos = pratosOrdenados.GroupBy(p => p.custo)
+                                        .OrderByDescending(g => g.Count())
+                                        .ToList();
+
+            // Usa uma fila para intercalar os pratos de diferentes custos
+            var fila = new Queue<Prato>();
+
+            foreach (var grupo in grupos)
             {
-                if (!contagemindices.ContainsKey(prato.indice))
+                foreach (var prato in grupo)
                 {
-                    contagemindices[prato.indice] = 0;
+                    fila.Enqueue(prato);
                 }
-                contagemindices[prato.indice]++;
             }
-            
-            // Lista de pares (indice, frequência) ordenada pela frequência decrescente
-            var listaContagem = contagemindices.OrderByDescending(kv => kv.Value).ToList();
-            
-            // Alternar os pratos
-            while (pratos.Count > 0)
+
+            // Intercala os pratos na ordem desejada
+            while (fila.Any())
             {
-                bool inserido = false;
-                foreach (var item in listaContagem)
+                var currentPrato = fila.Dequeue();
+                resultado.Add(currentPrato);
+
+                // Se o próximo prato tem o mesmo custo, pula ele para a próxima iteração
+                if (fila.Any() && fila.Peek().custo == currentPrato.custo)
                 {
-                    int indice = item.Key;
-                    if (contagemindices[indice] > 0 && (resultado.Count == 0 || resultado.Last().indice != indice))
+                    var temp = fila.Dequeue();
+                    if (fila.Any())
                     {
-                        var prato = pratos.First(p => p.indice == indice);
-                        resultado.Add(prato);
-                        pratos.Remove(prato);
-                        contagemindices[indice]--;
-                        inserido = true;
-                        break;
+                        fila.Enqueue(temp);
+                    }
+                    else
+                    {
+                        resultado.Add(temp);
                     }
                 }
-                
-                // Se não foi possível inserir nenhum prato de forma intercalada, inserir o próximo disponível
-                if (!inserido)
-                {
-                    var prato = pratos[0];
-                    resultado.Add(prato);
-                    pratos.RemoveAt(0);
-                    contagemindices[prato.indice]--;
-                }
             }
-            
+
             return resultado;
         }
 
@@ -237,6 +278,19 @@ namespace GerenciadorCardapio {
             }
             Console.WriteLine();
         }
+        static void PrintMatrix(string[,] matrix)
+        {
+            int rows = matrix.GetLength(0);
+            int columns = matrix.GetLength(1);
 
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    Console.Write(matrix[i, j] + "\t");
+                }
+                Console.WriteLine();
+            }
+        }
     }
 }
