@@ -23,7 +23,7 @@ class Program {
 		AlgoritmoGuloso.processaCasoTesteGuloso(casosTesteDinamico);
 
 		Console.WriteLine("\n\t\t------SOLUÇÃO DINÂMICA------\n");
-		processaCasoTesteDinamico(casosTesteDinamico);
+		AlgoritmoDinamico.processaCasoTesteDinamico(casosTesteDinamico);
 
 	}
 
@@ -160,124 +160,6 @@ class Program {
 			return infoPrato;
 		}
 
-	}
-
-	public static void processaCasoTesteDinamico(List<CasosTeste> casosTeste) {
-		double maiorLucroDia = 0;
-		List<CasosTeste> casosTesteDinamico = casosTeste;
-
-		Prato pratoLucroDia = new Prato();
-		List<Prato> menu = new List<Prato>();
-		double lucroTotal = 0;
-
-		for (int i = 0; i < casosTeste.Count; i++) {
-			casosTeste[i].pratos = casosTeste[i].pratos.OrderBy(c => c.custo).ToList();
-
-			for (int j = 0; j < casosTeste[i].numDias; j++) {
-				double[,] matrizDinamica = criarTabelaDinamica((casosTeste[i].numPratos + 2), (casosTeste[i].numPratos + 1), casosTeste[i].pratos, casosTeste[i].orcamento);
-
-				for (int k = 2; k < matrizDinamica.GetLength(0); k++) {
-					for (int l = 1; l < matrizDinamica.GetLength(1); l++) {
-						try {
-							if (matrizDinamica[k - 1, l] > matrizDinamica[k - 1, (int)matrizDinamica[0, l] - casosTeste[i].pratos[k - 2].custo] + casosTeste[i].pratos[k - 2].lucro) {
-								matrizDinamica[k, l] = matrizDinamica[k - 1, l];
-							} else {
-								matrizDinamica[k, l] = (matrizDinamica[k - 1, (int)matrizDinamica[0, l] - casosTeste[i].pratos[k - 2].custo] + casosTeste[i].pratos[k - 2].lucro);
-							}
-
-						} catch (Exception err) {
-							matrizDinamica[k, l] = matrizDinamica[k - 1, l];
-
-						}
-
-					}
-				}
-
-
-				PrintMatrix(matrizDinamica);
-				maiorLucroDia = (matrizDinamica[matrizDinamica.GetLength(0) - 1, matrizDinamica.GetLength(1) - 1]);
-				Console.WriteLine($"\nMAIOR LUCRO: {maiorLucroDia}");
-
-
-				//Console.WriteLine("---------------------------");
-
-				lucroTotal += maiorLucroDia;
-
-				Console.WriteLine($"LUCRO TOTAL: {lucroTotal}");
-
-
-				if (maiorLucroDia != 0) {
-					casosTeste[i].pratos.ForEach(p => {
-						if (p.lucro.Equals(maiorLucroDia)) {
-							menu.Add(p);
-							pratoLucroDia = p;
-							if (p.isReduzido) {
-								p.lucro = 0;
-
-							} else {
-								p.lucro = (p.lucro / 2);
-								p.isReduzido = true;
-							}
-						}
-					});
-
-
-					casosTeste[i].orcamento = casosTeste[i].orcamento - pratoLucroDia.custo;
-
-					Console.WriteLine("-------LUCRO DOS PRATOS-------");
-					casosTeste[i].pratos.ForEach(p => { Console.WriteLine(p.lucro + " \t"); });
-
-				}
-			}
-
-			exibirMenuMetodoDinamico(lucroTotal, menu, i);
-		}
-	}
-
-	static void PrintMatrix(double[,] matrix) {
-		int rows = matrix.GetLength(0);
-		int columns = matrix.GetLength(1);
-
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < columns; j++) {
-				Console.Write(matrix[i, j] + "\t");
-			}
-			Console.WriteLine();
-		}
-	}
-	public static void exibirMenuMetodoDinamico(double lucro, List<Prato> menu, int casoTeste) {
-		Console.WriteLine("\nSaída: ");
-		Console.WriteLine($"CASO DE TESTE {casoTeste + 1}: ");
-		Console.WriteLine("  Lucro máximo: " + lucro);
-		Console.WriteLine("  Pratos a ser cozinhados:");
-		Console.Write("  ");
-		imprimePratos(menu);
-		Console.WriteLine(" ----------------- ");
-	}
-
-	public static double[,] criarTabelaDinamica(int linhas, int colunas, List<Prato> pratos, double orcamento) {
-		double[,] tabelaPreenchida = new double[linhas, colunas];
-
-		tabelaPreenchida[0, 0] = 0;
-
-		for (int i = 1; i < colunas; i++) {
-			if (pratos[i - 1].custo <= orcamento)
-				tabelaPreenchida[0, i] = pratos[i - 1].custo;
-			else if (i > 1)
-				tabelaPreenchida[0, i] = tabelaPreenchida[0, i - 1];
-			else
-				tabelaPreenchida[0, i] = 0;
-		}
-
-		for (int i = 0; i < colunas; i++) {
-			tabelaPreenchida[1, i] = 0;
-		}
-
-		for (int i = 2; i < linhas; i++) {
-			tabelaPreenchida[i, 0] = 0;
-		}
-
-		return tabelaPreenchida;
 	}
 
 	public static void imprimeInformacoes(List<CasosTeste> casosTeste) {
