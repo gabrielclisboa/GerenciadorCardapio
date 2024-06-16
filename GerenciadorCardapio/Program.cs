@@ -27,8 +27,9 @@ class Program {
 
 	}
 
+	//Função para ler e armazenar as infomarções dos casos de teste e dos pratos
 	public static void obterInformacoesPratos(List<CasosTeste> casosTesteGuloso, List<CasosTeste> casosTesteDinamico, int numCasoTeste) {
-		int numDias = 0, numPratos = 0, orcamento = 0;
+		int numDias, numPratos, orcamento;
 		int lucro, custo, qtdPratos;
 		string prato;
 		List<Prato> pratosGuloso;
@@ -36,10 +37,11 @@ class Program {
 
 		Console.WriteLine();
 
-		int[] aux = ValidaCasoDeTeste(numCasoTeste);
-		numDias = aux[0];
-		numPratos = aux[1];
-		orcamento = aux[2];
+		int[] infosEntrada = ValidaCasoDeTeste(numCasoTeste);
+
+		numDias = infosEntrada[0];			//armazenando o numero de dias informado pelo usuário
+		numPratos = infosEntrada[1];        //armazenando o numero de pratos informado pelo usuário
+		orcamento = infosEntrada[2];        //armazenando o orcamento disponível informado pelo usuário
 
 		if (numDias != 0 && numPratos != 0 && orcamento != 0)
 		{
@@ -47,12 +49,11 @@ class Program {
 			pratosDinamico = new List<Prato>();
 			qtdPratos = 0;
 
-			//Console.WriteLine("Pratos:");
 			while (qtdPratos < numPratos)
 			{
-				aux = ValidaPratos(qtdPratos + 1);
-				custo = aux[0];
-				lucro = aux[1];
+				infosEntrada = ValidaPratos(qtdPratos + 1);
+				custo = infosEntrada[0];			//armazenando o custo do prato 
+				lucro = infosEntrada[1];            //armazenando o lucro do prato 
 
 				pratosGuloso.Add(new Prato(qtdPratos + 1, custo, lucro));     //inserindo o novo prato na lista
 				pratosDinamico.Add(new Prato(qtdPratos + 1, custo, lucro));     //inserindo o novo prato na lista
@@ -71,11 +72,13 @@ class Program {
 
 	}
 
-	public static int[] ValidaCasoDeTeste(int numCasoTeste) // Função responsável por ler e validar os casos de teste
+	// Função responsável por ler e validar os casos de teste
+	public static int[] ValidaCasoDeTeste(int numCasoTeste) 
 	{
 		string casoTeste;
 		int[] infoCasoTeste = new int[3];
 
+		//vai executar enquanto o usuário não informar todos os valores válidos
 		while (true)
 		{
 			Console.WriteLine($"Caso de teste {numCasoTeste}: ");
@@ -94,16 +97,19 @@ class Program {
 				continue;
 			}
 
+			//Validadando se o número de dias infomado está no intervalo permitido
 			if (infoCasoTeste[0] < 0 || infoCasoTeste[0] > 21) // Valida 
 			{
 				Console.WriteLine("  *Informe valores válidos.\n");
 				continue;
 			}
+			//Validadando se o número de pratos informado está no intervalo permitido
 			else if (infoCasoTeste[1] < 0 || infoCasoTeste[1] > 50)
 			{
 				Console.WriteLine("  *Informe valores válidos.\n");
 				continue;
 			}
+			//Validadando se o orcamento está no intervalo permitido
 			else if (infoCasoTeste[2] < 0 || infoCasoTeste[2] > 100)
 			{
 				Console.WriteLine("  *Informe valores válidos.\n");
@@ -113,11 +119,13 @@ class Program {
 		}
 
 	}
-	public static int[] ValidaPratos(int numPrato) // Função responsável por ler e validar os pratos
+	// Função responsável por ler e validar os dados dos pratos
+	public static int[] ValidaPratos(int numPrato) 
     {
 		string prato;
 		int[] infoPrato = new int[2];
 
+		//vai executar enquanto o usuário não informar todos os valores dos pratos válidos
 		while (true)
 		{
 			Console.WriteLine($"Prato {numPrato}:");
@@ -134,16 +142,20 @@ class Program {
 				continue;
 			}
 
+			//Verificando se o valor do custo informado está no intervalo permitido
 			if (infoPrato[0] < 1 || infoPrato[0] > 50)
 			{
 				Console.WriteLine("  *Informe valores válidos para o custo e lucro.\n");
 				continue;
 			}
+
+			//Verificando se o valor do lucro informado está no intervalo permitido
 			else if (infoPrato[1] < 1 || infoPrato[1] > 10000)
 			{
 				Console.WriteLine("  *Informe valores válidos para o custo e lucro.\n");
 				continue;
 			}
+
 			return infoPrato;
 		}
 
@@ -281,13 +293,22 @@ class Program {
 
 				//verificando se o caso de teste possui mais de 1 prato, pois desta forma será possivel escolher um prato diferente daquele escolhido anteriormente
 				if (casosTeste[i].pratos.Count > 1) {
-					gastoTotal = procuraMelhorPrato(casosTeste[i].pratos, pratosEscolhidos, casosTeste[i].orcamento);
+					gastoTotal += procuraMelhorPrato(casosTeste[i].pratos, pratosEscolhidos, casosTeste[i].orcamento);
 					
 				} else {
-					//Vai calcular o novo lucro de acordo com a quantidade de vezes seguidas que o prato já foi escolhido
-					double novoLucro = calculaNovoLucro(casosTeste[i].pratos[0], pratosEscolhidos.Count());
-					pratosEscolhidos.Add(new Prato(casosTeste[i].pratos[0].indice, casosTeste[i].pratos[0].custo, novoLucro));  //Vai adicionar sempre o mesmo prato na lista, mas com novo lucro
 
+					double novoLucro = 0;
+
+					//Validando se o prato já foi escolhido alguma vez para calcular o novo lucro dele
+					if(pratosEscolhidos.Count() > 0) {
+						if (pratosEscolhidos.Last().lucro > 0)  //validando se o ultimo prato inserido ja não possui custo 0 (foi adicionado mais de 3 vezes)
+							novoLucro = pratosEscolhidos.Last().lucro - (casosTeste[i].pratos[0].lucro / 2);        //último custo do prato inserido na lista - custo inical dele / 2
+					} else {
+						novoLucro = casosTeste[i].pratos[0].lucro; //O Lucro do prato será de 100%
+					}
+					
+					pratosEscolhidos.Add(new Prato(casosTeste[i].pratos[0].indice, casosTeste[i].pratos[0].custo, novoLucro));  //Vai adicionar sempre o mesmo prato na lista, mas com novo lucro
+					gastoTotal += pratosEscolhidos.Last().custo;
 				}
 				qtdDias++;
 
@@ -313,64 +334,61 @@ class Program {
 	}
 
 	//Função para encontrar o proximo prato a ser escolhido
-	public static double procuraMelhorPrato(List<Prato> pratos, List<Prato> pratosEscolhidos, int orcamento)
+	public static double procuraMelhorPrato(List<Prato> pratos, List<Prato> pratosEscolhidos, int orcamentoTotal)
 	{
 		int i = 0;
+		double orcamentoDisponivel = orcamentoTotal - pratosEscolhidos.Sum(x => x.custo);
 
 		//verificando se algum prato já foi escolhido
 		if (pratosEscolhidos.Count() > 0)
 		{
 
-			//verificando se o primeiro prato não foi o ultimo a ser escolhido
-			if (pratos[i].indice != pratosEscolhidos.Last()?.indice && (pratosEscolhidos.Sum(x => x.custo) + pratos[i].custo) <= orcamento)
+			//Verificando se o primeiro prato não foi o ultimo a ser escolhido
+			//e se o seu custo não é maior que o orcamento ainda disponivel
+			if (pratos[i].indice != pratosEscolhidos.Last()?.indice && pratos[i].custo <= orcamentoDisponivel)
 			{
 				pratosEscolhidos.Add(pratos[i]);    //adicionando o primeiro prato na lista
 
 			}
-			else if ((pratosEscolhidos.Sum(x => x.custo) + pratos[i + 1].custo) <= orcamento)
+
+			//Verificando se é possivel inserir o segundo prato na lista
+			else if (pratos[i + 1].custo <= orcamentoDisponivel)
 			{
 				pratosEscolhidos.Add(pratos[i + 1]);    //adicionando o segundo prato na lista
 			}
-			else if ((pratosEscolhidos.Sum(x => x.custo) + pratos[i].custo) <= orcamento)
+
+			//Como não foi possível inserir o segundo prato na lista, vai tentar inserir o primeiro novamente
+			else if ( pratos[i].custo <= orcamentoDisponivel)
 			{
 				double novoLucro = 0;
+
+				//validando se o ultimo prato inserido ja não possui custo 0 (foi adicionado mais de 3 vezes)
                 if (pratosEscolhidos.Last().lucro > 0)
-				     novoLucro = pratosEscolhidos.Last().lucro - (pratos[i].lucro / 2); 
+				     novoLucro = pratosEscolhidos.Last().lucro - (pratos[i].lucro / 2); //último custo do prato inserido na lista - custo inical dele / 2
 
 				pratosEscolhidos.Add(new Prato(indice: pratos[i].indice, custo: pratos[i].custo, lucro: novoLucro));    //adicionando o primeiro prato na lista novamente
 			}
 			else
 			{
-                // Caso o primeiro prato ou o segundo, não possa ser escolhido, siginifca que o cardápio ultrapassou o orçamento
+                // Nenhum prato pode ser mais adicionado na lista, ultrapassou o orçamento
                 return 0;
 			}
 
 		}
-		else if (pratos[i].custo > orcamento)
+		//Caso nenhum prato tenha sido escolhido, vai tentar inserir o primeiro, pois ele possui o menor custo
+		else if (pratos[i].custo < orcamentoDisponivel)
 		{
-			// Caso o primeiro prato não possa ser escolhido, siginifca que o cardápio ultrapassou o orçamento
-            return 0;
+			pratosEscolhidos.Add(pratos[i]);
 
-        }
+		}
 		else
 		{
-            //Caso nenhum prato tenha sido escolhido, o primeiro prato vai ser escolhido, pois ele possui o menor custo
-            pratosEscolhidos.Add(pratos[i]);
-        }
-        return pratosEscolhidos.Sum(x => x.custo);
-    }
-
-	//Função para calcular o novo lucro de pratos escolhidos 2 vezes ou mais seguidas
-	public static double calculaNovoLucro(Prato prato, int qdtPratosEscolhidos) {
-		if (qdtPratosEscolhidos == 0) {
-			return prato.lucro;		//retorna 100% do lucro	
-		} else if (qdtPratosEscolhidos == 1) {
-			return prato.lucro / 2;		//retorna 50% do lucro
-		} else {
-			return 0;						
+			// O primeiro prato não possa ser escolhido: siginifca que o cardápio ultrapassou o orçamento
+			return 0;
 		}
-	}
 
+        return pratosEscolhidos.Last().custo;	//Retornando o custo do ultimo prato escolhido
+    }
 
 	public static void imprimeInformacoes(List<CasosTeste> casosTeste) {
 		Console.WriteLine("\n-----INFORMAÇÕES DOS CASOS DE TESTE----\n");
