@@ -10,22 +10,21 @@ namespace GerenciadorCardapio {
 
                 for(int i = 2; i < matriz.GetLength(0); i++){
                     for(int j = 1; j < matriz.GetLength(1); j++){
-                        if(j < matriz.GetLength(1) - 1){
+                        if(j == matriz.GetLength(1) - 1 && i == matriz.GetLength(0) - 1){
                             if(j - casosTeste[c].pratos[i - 2].custo >= 0){
-                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], matriz[i, j -1], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, false);
+                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], matriz[i, j -1], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, true);
                             }else{
                                 matriz[i, j] = matriz[i - 1, j];
                             }
                         }else{
                             if(j - casosTeste[c].pratos[i - 2].custo >= 0){
-                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], matriz[i, j -1], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, true);
+                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], matriz[i, j -1], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, false);
                             }else{
                                 matriz[i, j] = matriz[i - 1, j];
                             }
                         }
                     }
                 }
-
                 List<Prato> menu = obtemMenu(matriz[matriz.GetLength(0) - 1, matriz.GetLength(1) - 1], casosTeste[c].pratos);
                 double lucro = obtemLucro(matriz[matriz.GetLength(0) - 1, matriz.GetLength(1) - 1]);
                 exibirMenuMetodoDinamico(lucro, menu, c);
@@ -103,10 +102,10 @@ namespace GerenciadorCardapio {
                 return geraCelulaBase(pratos);
             }else if(primeiraCelulaValores[0] > segundaCelulaComLucroDinamico[0] && primeiraCelulaValores[0] > terceiraCelulaValores[0]){
                 return primeiraCelula;
-            }else if(segundaCelulaComLucroDinamico[0] > primeiraCelulaValores[0] && segundaCelulaComLucroDinamico[0] > terceiraCelulaValores[0]){
-                return paraString(segundaCelulaComLucroDinamico);
-            }else{
+            }else if(terceiraCelulaValores[0] > primeiraCelulaValores[0] && terceiraCelulaValores[0] > segundaCelulaComLucroDinamico[0]){
                 return terceiraCelula;
+            }else{
+                return paraString(segundaCelulaComLucroDinamico);
             }
         }
 
