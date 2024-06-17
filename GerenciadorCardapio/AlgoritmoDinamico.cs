@@ -2,7 +2,7 @@ using GerenciadorDeCardapio;
 
 namespace GerenciadorCardapio {
 	public static class AlgoritmoDinamico{
-        public static void processaCasoTesteDinamico(List<CasosTeste> casosTeste)
+        public static void processaCasoTesteDinamico(List<CasosTeste> casosTeste) // Controla o processamento dos casos de teste através do algoritmo dinâmico
         {
             for(int c = 0; c < casosTeste.Count; c++){
                 casosTeste[c].pratos = casosTeste[c].pratos.OrderByDescending(v => v.custo).ToList(); // ordenando os pratos em ordem decrescente de custo
@@ -10,9 +10,6 @@ namespace GerenciadorCardapio {
 
                 for(int i = 2; i < matriz.GetLength(0); i++){
                     for(int j = 1; j < matriz.GetLength(1); j++){
-                        if(j <= 2 && i == 2){           
-
-                        }
                         if(j < matriz.GetLength(1) - 1){
                             if(j - casosTeste[c].pratos[i - 2].custo >= 0){
                                 matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, false);
@@ -35,7 +32,7 @@ namespace GerenciadorCardapio {
             }
         }
 
-        static string[,] criarMatrizDinamica(int orcamento, List<Prato> pratos){
+        static string[,] criarMatrizDinamica(int orcamento, List<Prato> pratos){ // Cria uma matriz preenchendo a primeira linha e a primeira coluna com o caso base
             string[,] matriz = new string[pratos.Count + 2, orcamento + 1];
             string celulaBase = geraCelulaBase(pratos);
             for(int i = 0; i < matriz.GetLength(1); i++){
@@ -50,7 +47,7 @@ namespace GerenciadorCardapio {
 
             return matriz;
         }
-        static string geraCelulaBase(List<Prato> pratos){
+        static string geraCelulaBase(List<Prato> pratos){ // Cria uma célula que representa o caso base
             string resultado = "0-";
             for(int i = 0; i < pratos.Count; i++){
                 resultado += pratos[i].custo.ToString();
@@ -59,7 +56,8 @@ namespace GerenciadorCardapio {
             return resultado;
         }
 
-        static string melhorValorEntre(string primeiraCelula, string segundaCelula, double lucro, int numeroPrato, List<Prato> pratos, int numDias, bool ultima){
+        // Recebe as duas células a serem comparadas e retorna aquela que gera o maior lucro possível
+        static string melhorValorEntre(string primeiraCelula, string segundaCelula, double lucro, int numeroPrato, List<Prato> pratos, int numDias, bool ultima){ 
             string[] primeiraCelulaDividida = primeiraCelula.Split("-");
             string[] segundaCelulaDividida = segundaCelula.Split("-");
 
@@ -86,7 +84,7 @@ namespace GerenciadorCardapio {
             }
         }
 
-        static string paraString(double[] vetorDoubles){
+        static string paraString(double[] vetorDoubles){ // Converte um vetor de doubles para uma string a ser adicionada na célula
             string resultado = "";
             for(int i = 0; i < vetorDoubles.Length; i++){
                 resultado += vetorDoubles[i].ToString();
@@ -95,7 +93,8 @@ namespace GerenciadorCardapio {
             return resultado;
         }
         
-        static double[] lucroDinamico(double[] celula, int numeroPrato, List<Prato> pratos, int numDias, double lucroAcumulado){
+        // Calcula o lucro de uma célula + o lucro de um prato, baseado nas regras de usar pratos dias seguidos
+        static double[] lucroDinamico(double[] celula, int numeroPrato, List<Prato> pratos, int numDias, double lucroAcumulado){ 
             Prato prato = pratos[numeroPrato];
 
             if(diasPrevistos(celula) < numDias){
@@ -110,7 +109,7 @@ namespace GerenciadorCardapio {
             return celula;
         }
 
-        public static double calculaLucroDaSequencia(List<Prato> pratos){
+        public static double calculaLucroDaSequencia(List<Prato> pratos){ // Calcula o lucro gerado por uma sequência de pratos
             if(pratos.Count == 1){
                 return pratos[0].lucro;
             }
@@ -128,7 +127,8 @@ namespace GerenciadorCardapio {
             return resultado;
         }
 
-        public static List<Prato> celulaParaLista(string celula, List<Prato> pratos)
+        // Dada a string de uma célula, cria e retorna a lista de pratos que representa as informações da célula
+        public static List<Prato> celulaParaLista(string celula, List<Prato> pratos) 
         {
             var resultado = new List<Prato>();
             var pares = celula.Split('-');
@@ -159,7 +159,7 @@ namespace GerenciadorCardapio {
         }
 
 
-        static int parteDecimal(double numero)
+        static int parteDecimal(double numero) // Retorna a parte decimal de um double como um inteiro
         {
             string numeroString = numero.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
@@ -178,7 +178,7 @@ namespace GerenciadorCardapio {
         }
 
 
-        static int diasPrevistos(double[] celula){
+        static int diasPrevistos(double[] celula){ // Dada a string de uma célula, retorna quantos dias a célula está preenchendo com pratos
             int dias = 0;
 
             for(int i = 1; i < celula.Length; i++){
@@ -188,7 +188,7 @@ namespace GerenciadorCardapio {
             return dias;
         }
 
-        static double[] paraDouble(string[] vetorStrings){
+        static double[] paraDouble(string[] vetorStrings){ // Converte a string da célula para um vetor de doubles para realizar os cálculos
             double[] resultado = new double[vetorStrings.Length - 1];
             for(int i = 0; i < vetorStrings.Length - 1; i++){
                 resultado[i] = double.Parse(vetorStrings[i]);
@@ -196,7 +196,7 @@ namespace GerenciadorCardapio {
             return resultado;
         }
 
-        static List<Prato> obtemMenu(string celula, List<Prato> pratos){
+        static List<Prato> obtemMenu(string celula, List<Prato> pratos){ // Dada a última célula da matriz, retorna o menu escolhido
             string[] celulaDividida = celula.Split('-');
             double[] celulaValores = paraDouble(celulaDividida);
             List<Prato> resultado = new List<Prato>();
@@ -210,7 +210,8 @@ namespace GerenciadorCardapio {
             return IntercalarPratos(resultado);
         }
 
-        public static List<Prato> IntercalarPratos(List<Prato> pratos)
+        // Dada uma lista de pratos, ordena a lista de modo que pratos com o mesmo custo fiquem o mais afastados possível, se possível 
+        public static List<Prato> IntercalarPratos(List<Prato> pratos) 
         {
             // Ordena os pratos pelo custo
             var pratosOrdenados = pratos.OrderBy(p => p.custo).ToList();
@@ -258,12 +259,12 @@ namespace GerenciadorCardapio {
             return resultado;
         }
 
-        static double obtemLucro(string celula){
+        static double obtemLucro(string celula){ // Dada a string de uma célula, retorna o valor do lucro previsto por ela
             string[] celulaDividida = celula.Split('-');
             return double.Parse(celulaDividida[0]);
         }
 
-        public static void exibirMenuMetodoDinamico(double lucro, List<Prato> menu, int casoTeste)
+        public static void exibirMenuMetodoDinamico(double lucro, List<Prato> menu, int casoTeste) // Exibe a saída do algoritmo no console
         {
             Console.WriteLine("\nSaída: ");
             Console.WriteLine($"CASO DE TESTE {casoTeste + 1}: ");
@@ -273,7 +274,7 @@ namespace GerenciadorCardapio {
             Console.WriteLine(" ----------------- ");
         }
 
-        public static void imprimePratos(List<Prato> pratos)
+        public static void imprimePratos(List<Prato> pratos) // Imprime a lista de pratos
         {
             foreach (var prato in pratos)
             {
@@ -281,7 +282,7 @@ namespace GerenciadorCardapio {
             }
             Console.WriteLine();
         }
-        static void PrintMatrix(string[,] matrix)
+        static void PrintMatrix(string[,] matrix) // Caso necessário, imprime a matriz para ver o andamento das execuções
         {
             int rows = matrix.GetLength(0);
             int columns = matrix.GetLength(1);
