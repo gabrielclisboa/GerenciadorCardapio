@@ -64,7 +64,7 @@ Nessa etapa, ocorre o pré-preenchimento da matriz. Esse processo atribui valor 
 
 **3**-10-3,1-1- : Representa o lucro total da célula.
 
-3-**10-3**,1-*1*- : Representa o custo de cada prato que foi informado pelo usuário.
+3-**10-3**,1-**1**- : Representa o custo de cada prato que foi informado pelo usuário.
 
 3-10-3,**1**-1-:  Quantas vezes um determinado prato foi utilizado. 3,1 significa que o prato de custo 3 foi utilizado 1 vez. 
 
@@ -93,7 +93,8 @@ Utilizando como exemplo o preenchimento da célula[2][1] , é realizado os segui
 
 Esse exemplo demonstra outra característica da solução desenvolvida, que é sempre se atentar ao valor do orçamento e o custo do prato a cada iteração. Avançando algumas execuções, temos outro cenário:
 
-![image](https://github.com/gabrielclisboa/GerenciadorCardapio/assets/72041841/873f3e68-27f1-44da-8ff0-d68f19d85ed0)
+![image](https://github.com/gabrielclisboa/GerenciadorCardapio/assets/72041841/c5e34ff2-abe2-4e25-9c43-cf9c8f14e9ae)
+
 
 Para calcular o valor da célula[4][4], temos novamente os seguintes passos:
 
