@@ -5,20 +5,20 @@ namespace GerenciadorCardapio {
         public static void processaCasoTesteDinamico(List<CasosTeste> casosTeste) // Controla o processamento dos casos de teste através do algoritmo dinâmico
         {
             for(int c = 0; c < casosTeste.Count; c++){
-                casosTeste[c].pratos = casosTeste[c].pratos.OrderByDescending(v => v.custo).ToList(); // ordenando os pratos em ordem decrescente de custo
+                casosTeste[c].pratos = casosTeste[c].pratos.OrderByDescending(v => v.lucro).ToList(); // ordenando os pratos em ordem decrescente de custo
                 string[,] matriz = criarMatrizDinamica(casosTeste[c].orcamento, casosTeste[c].pratos);
 
                 for(int i = 2; i < matriz.GetLength(0); i++){
                     for(int j = 1; j < matriz.GetLength(1); j++){
                         if(j < matriz.GetLength(1) - 1){
                             if(j - casosTeste[c].pratos[i - 2].custo >= 0){
-                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, false);
+                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], matriz[i, j -1], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, false);
                             }else{
                                 matriz[i, j] = matriz[i - 1, j];
                             }
                         }else{
                             if(j - casosTeste[c].pratos[i - 2].custo >= 0){
-                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, true);
+                                matriz[i, j] = melhorValorEntre(matriz[i - 1, j], matriz[i, j - casosTeste[c].pratos[i - 2].custo], matriz[i, j -1], casosTeste[c].pratos[i - 2].lucro, i - 2, casosTeste[c].pratos, casosTeste[c].numDias, true);
                             }else{
                                 matriz[i, j] = matriz[i - 1, j];
                             }
@@ -57,30 +57,56 @@ namespace GerenciadorCardapio {
         }
 
         // Recebe as duas células a serem comparadas e retorna aquela que gera o maior lucro possível
-        static string melhorValorEntre(string primeiraCelula, string segundaCelula, double lucro, int numeroPrato, List<Prato> pratos, int numDias, bool ultima){ 
+        static string melhorValorEntre(string primeiraCelula, string segundaCelula, string terceiraCelula, double lucro, int numeroPrato, List<Prato> pratos, int numDias, bool ultima){ 
             string[] primeiraCelulaDividida = primeiraCelula.Split("-");
             string[] segundaCelulaDividida = segundaCelula.Split("-");
+            string[] terceiraCelulaDividida = terceiraCelula.Split("-");
 
             double[] primeiraCelulaValores = paraDouble(primeiraCelulaDividida);
             double[] segundaCelulaValores = paraDouble(segundaCelulaDividida);
+            double[] terceiraCelulaValores = paraDouble(terceiraCelulaDividida);
             double[] segundaCelulaComLucroDinamico = lucroDinamico(segundaCelulaValores, numeroPrato, pratos, numDias, lucro);
 
-            if(ultima == true && diasPrevistos(primeiraCelulaValores) == numDias && diasPrevistos(segundaCelulaComLucroDinamico) == numDias){
-                if(primeiraCelulaValores[0] < segundaCelulaComLucroDinamico[0]){
+            if(ultima == true && diasPrevistos(primeiraCelulaValores) == numDias && diasPrevistos(segundaCelulaComLucroDinamico) == numDias && diasPrevistos(terceiraCelulaValores) == numDias){
+                if(primeiraCelulaValores[0] > segundaCelulaComLucroDinamico[0] && primeiraCelulaValores[0] > terceiraCelulaValores[0]){
+                    return primeiraCelula;
+                }else if(segundaCelulaComLucroDinamico[0] > primeiraCelulaValores[0] && segundaCelulaComLucroDinamico[0] > terceiraCelulaValores[0]){
                     return paraString(segundaCelulaComLucroDinamico);
                 }else{
-                   return primeiraCelula; 
+                    return terceiraCelula;
+                }
+            }else if(ultima == true && diasPrevistos(primeiraCelulaValores) == numDias && diasPrevistos(segundaCelulaComLucroDinamico) == numDias){ // 1 e 2
+                if(primeiraCelulaValores[0] > segundaCelulaComLucroDinamico[0]){
+                    return primeiraCelula;
+                }else{
+                    return segundaCelula;
+                }
+            }else if(ultima == true && diasPrevistos(primeiraCelulaValores) == numDias && diasPrevistos(terceiraCelulaValores) == numDias){ // 1 e 3
+                if(primeiraCelulaValores[0] > terceiraCelulaValores[0]){
+                    return primeiraCelula;
+                }else{
+                    return terceiraCelula;
+                }
+            }else if(ultima == true && diasPrevistos(segundaCelulaComLucroDinamico) == numDias && diasPrevistos(terceiraCelulaValores) == numDias){ // 2 e 3
+                if(terceiraCelulaValores[0] > segundaCelulaComLucroDinamico[0]){
+                    return terceiraCelula;
+                }else{
+                    return segundaCelula;
                 }
             }else if(ultima == true && diasPrevistos(primeiraCelulaValores) == numDias){
                 return primeiraCelula;
             }else if(ultima == true && diasPrevistos(segundaCelulaComLucroDinamico) == numDias){
                 return paraString(segundaCelulaComLucroDinamico);
+            }else if(ultima == true && diasPrevistos(terceiraCelulaValores) == numDias){
+                return terceiraCelula;
             }else if(ultima == true){
                 return geraCelulaBase(pratos);
-            }else if(primeiraCelulaValores[0] < segundaCelulaComLucroDinamico[0]){
+            }else if(primeiraCelulaValores[0] > segundaCelulaComLucroDinamico[0] && primeiraCelulaValores[0] > terceiraCelulaValores[0]){
+                return primeiraCelula;
+            }else if(segundaCelulaComLucroDinamico[0] > primeiraCelulaValores[0] && segundaCelulaComLucroDinamico[0] > terceiraCelulaValores[0]){
                 return paraString(segundaCelulaComLucroDinamico);
             }else{
-                return primeiraCelula;
+                return terceiraCelula;
             }
         }
 
