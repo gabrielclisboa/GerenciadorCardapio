@@ -8,7 +8,7 @@
 * Roberto Eller Paiva
 * Thais Alves Silva
 
-##### 1) Como esse problema pode ser modelado para o paradigma guloso? 
+### 1) Como esse problema pode ser modelado para o paradigma guloso? 
 A abordagem de um algoritmo guloso baseia-se na tomada de decisões consideradas localmente ótimas em cada etapa, com a esperança de que essas decisões levem a uma solução globalmente ótima.
 Desta forma, para resolver o problema proposto utilizou-se a heurística de selecionar sempre o prato com o menor custo disponível, visando adicionar o maior número possível de pratos ao cardápio e assim, maximizar o lucro total. 
 
@@ -32,7 +32,7 @@ O resultado final será:
 ![image](https://github.com/gabrielclisboa/GerenciadorCardapio/assets/72041841/a74eded4-7ea8-4d7c-807f-47654a88e747)
 
 
-##### 2) Seu algoritmo guloso apresenta uma solução ótima? Por quê? 
+### 2) Seu algoritmo guloso apresenta uma solução ótima? Por quê? 
 
 O algoritmo guloso desenvolvido não apresenta uma solução ótima. Isso ocorre devido ao comportamento de tentar escolher sempre de forma intercalada o prato de menor custo e o segundo prato de menor custo. Esta abordagem abre espaço para alguns casos em que a avaliação do lucro seria necessária para se obter a solução ótima, como por exemplo: o lucro de 50% do primeiro prato ser superior ao lucro do segundo prato.
 
@@ -46,7 +46,7 @@ Outro exemplo é o seguinte:
 
 Teríamos a solução ótima caso o algoritmo escolhesse o prato de custo 20, visto que o seu lucro é superior ao do primeiro prato, que possui o menor custo do cardápio. O algoritmo não avalia o lucro de um prato; ele sempre faz a escolha com base no custo, mesmo que haja outros pratos no cardápio que possuam um lucro maior. Como apresentado no exemplo acima, esses pratos não serão escolhidos devido ao seu custo.
 
-##### 3) Como esse problema pode ser modelado para o paradigma de programação dinâmica? 
+### 3) Como esse problema pode ser modelado para o paradigma de programação dinâmica? 
 A programação dinâmica possibilita a resolução de problemas que possuem a propriedade de subestrutura ótima, ou seja, a solução ótima pode ser  construída a partir das soluções ótimas dos seus subproblemas. Além disso, uma de suas vantagens é o reaproveitamento do resultado obtido de subproblemas resolvidos anteriormente. Nesse sentido, a modelagem utilizada, para o paradigma de programação dinâmica, faz o uso da abordagem bottom-up com o intuito de armazenar em uma tabela os lucros máximos possíveis, conforme a disponibilidade de pratos por linha e o orçamento das colunas da tabela. Ao final do preenchimento da tabela, é selecionada a última célula preenchida pelo algoritmo, isto é, a célula localizada na última linha e coluna, a qual representa o lucro máximo possível, conforme os dias, pratos e orçamento informados.
 
 Não obstante, para explanar de maneira mais clara o funcionamento da solução implementada, segue abaixo as principais etapas da execução da solução desenvolvida com as seguintes entradas :
@@ -112,11 +112,11 @@ Ao final da execução da etapa 2, é possível observar o seguinte resultado :
 
 Percebe-se que o lucro total da célula[4][7], última célula, é igual a 13. Conforme o supracitado, a última célula representa o lucro máximo que é passível de se obter considerando todo orçamento informado pelo usuário. Além disso, por conta da estruturação da célula adotada, também é visível os pratos selecionados. A ordem mais eficiente é definida por uma função interna que recebe pratos, da última célula, e retorna a ordem a qual eles geram o maior lucro possível. O retorno dessa função é exibido para o usuário. Dessa forma, o programa finaliza.
 
-##### 4) Discuta a subestrutura ótima e a sobreposição dos problemas. 
+### 4) Discuta a subestrutura ótima e a sobreposição dos problemas. 
 
 A subestrutura ótima permite decompor um problema grande em subproblemas menores e combina as soluções ótimas desses subproblemas para construir a solução ótima do problema original. A sobreposição de subproblemas permite a reutilização eficiente dos resultados dos subproblemas já resolvidos, evitando cálculos redundantes. Essas duas propriedades são fundamentais para a aplicação eficaz da programação dinâmica em uma ampla gama de problemas computacionais.
 
-##### 5) Algum algoritmo clássico foi adaptado para resolver o problema? Se sim, qual foi ele? 
+### 5) Algum algoritmo clássico foi adaptado para resolver o problema? Se sim, qual foi ele? 
 
 Não.
 
