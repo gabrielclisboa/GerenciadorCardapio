@@ -2,6 +2,30 @@
 using GerenciadorDeCardapio;
 using System.IO;
 
+/*
+Projeto: Sistema de Gerenciamento de Cardápio
+Disciplina: Fundamentos de Projeto e Análise de Algoritmos - Sistemas de Informação
+Professora: Amália Soares Vieira de Vasconcelos
+Autores:   
+	- Caio Vitor Souza Fernandes        (1216303@sga.pucminas.br)
+	- Gabriel Campos Ferreira Lisboa    (1362353@sga.pucminas.br)
+	- Lucas Ferreira Guedes                (1405925@sga.pucminas.br)
+	- Roberto Eller Paiva                (1395158@sga.pucminas.br)
+	- Thais Alves Silva                    (1390032@sga.pucminas.br)
+Versão: 1.3.0
+Data de Entrega: 17/06/2024
+Última Modificação: 17/06/2024
+Descrição: 
+    Este sistema ajuda Alfred a planejar seu cardápio para os próximos dias, maximizando o lucro obtido com a preparação dos pratos enquanto respeita o orçamento disponível. 
+    O problema foi solucionado utilizando uma abordagem gulosa e programação dinâmica. 
+Histórico de Versões:
+	[Versão 1.0.0]: Criação das classes de dominio do problema.
+	[Versão 1.1.0]: Criação dos métodos para leitura e armazenamento das informações do usuário
+	[Versão 1.2.0]: Implementação da soução utilizando abordagem gulosa.
+	[Versão 1.2.1]: Implementação da soução utilizando abordagem dinâmica.
+	[Versão 1.3.0]: Correção de bugs e melhorias nas saídas para o usuário.
+*/
+
 class Program {
 
 	static void Main(string[] args) {
