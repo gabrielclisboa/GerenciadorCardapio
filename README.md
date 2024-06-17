@@ -28,6 +28,7 @@ prato 2 | prato 1 | prato 3.
 Para cada dia, o algoritmo guloso tentará primeiramente selecionar o prato 2, pois ele possui o menor custo. No dia seguinte, como o prato 2 foi o último a ser escolhido, o algoritmo avaliará o prato 1, verificando se seu custo está dentro do orçamento disponível, se estiver, ele adiciona o prato 1 no cardápio.
 Caso o custo do prato 1 ultrapasse o orçamento, o algoritmo não precisará validar o prato 3, já que a lista está ordenada e todos os pratos subsequentes também excederão o orçamento. Nesse cenário, o algoritmo continuará tentando selecionar o prato 2 repetidamente, caso o seu custo ainda esteja dentro do orçamento. Ele repetirá esse processo até finalizar a quantidade de dias.
 O resultado final será: 
+
 ![image](https://github.com/gabrielclisboa/GerenciadorCardapio/assets/72041841/a74eded4-7ea8-4d7c-807f-47654a88e747)
 
 
@@ -40,6 +41,7 @@ O algoritmo guloso desenvolvido não apresenta uma solução ótima. Isso ocorre
 Neste exemplo, seria mais vantajoso e lucrativo fazer a escolha do primeiro prato na segunda iteração do algoritmo, dado que seu lucro mesmo com desconto é superior ao lucro do segundo prato. Entretanto, o algoritmo tenta contornar esse desconto não escolhendo o prato que foi escolhido anteriormente, partindo para o segundo prato do cardápio que possui o menor custo, almejando o seu lucro máximo.
 
 Outro exemplo é o seguinte:
+
 ![image](https://github.com/gabrielclisboa/GerenciadorCardapio/assets/72041841/45dc5598-c28a-48ab-b807-f7eadcad0e75)
 
 Teríamos a solução ótima caso o algoritmo escolhesse o prato de custo 20, visto que o seu lucro é superior ao do primeiro prato, que possui o menor custo do cardápio. O algoritmo não avalia o lucro de um prato; ele sempre faz a escolha com base no custo, mesmo que haja outros pratos no cardápio que possuam um lucro maior. Como apresentado no exemplo acima, esses pratos não serão escolhidos devido ao seu custo.
