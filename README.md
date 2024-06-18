@@ -84,7 +84,7 @@ Após a construção da matriz, ocorre o preenchimento das demais células resta
 
 Utilizando como exemplo o preenchimento da célula[2][1] , é realizado os seguintes passos:
 
-1) É possível obter um lucro maior do que o lucro obtido na célula[2][-9] (não existe)  selecionando o prato 2 somado com o valor da célula[2][1] ? Não, pois a célula[2][-9] não existe. Sendo assim é selecionado o caso base.
+1) É possível obter um lucro maior do que o lucro obtido na célula[2][-8] (não existe)  selecionando o prato 2 somado com o valor da célula[2][1] ? Não, pois a célula[2][-8] não existe. Sendo assim é selecionado o caso base.
 
 
 2) O orçamento está sendo extrapolado ? Não, pois o caso base possui o valor de lucro total igual a 0, que é inferior a 1(limite de lucro da coluna 1).	
