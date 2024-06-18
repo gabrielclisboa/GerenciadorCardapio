@@ -100,12 +100,12 @@ namespace GerenciadorCardapio {
                 return terceiraCelula;
             }else if(ultima == true){
                 return geraCelulaBase(pratos);
-            }else if(primeiraCelulaValores[0] > segundaCelulaComLucroDinamico[0] && primeiraCelulaValores[0] > terceiraCelulaValores[0]){
-                return primeiraCelula;
-            }else if(terceiraCelulaValores[0] > primeiraCelulaValores[0] && terceiraCelulaValores[0] > segundaCelulaComLucroDinamico[0]){
-                return terceiraCelula;
-            }else{
+            }else if(segundaCelulaComLucroDinamico[0] >= primeiraCelulaValores[0] && segundaCelulaComLucroDinamico[0] >= terceiraCelulaValores[0]){
                 return paraString(segundaCelulaComLucroDinamico);
+            }else if(primeiraCelulaValores[0] >= segundaCelulaComLucroDinamico[0] && primeiraCelulaValores[0] >= terceiraCelulaValores[0]){
+                return primeiraCelula;
+            }else{
+                return terceiraCelula;
             }
         }
 
