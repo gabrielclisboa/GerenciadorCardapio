@@ -291,11 +291,12 @@ namespace GerenciadorCardapio {
 
         public static void exibirMenuMetodoDinamico(double lucro, List<Prato> menu, int casoTeste) // Exibe a saída do algoritmo no console
         {
-            Console.WriteLine("\nSaída: ");
+            Console.WriteLine("\nSaída:\n ");
             Console.WriteLine($"CASO DE TESTE {casoTeste + 1}: ");
-            Console.WriteLine("Lucro: " + lucro);
-            Console.WriteLine("Pratos:");
-            imprimePratos(menu);
+            Console.WriteLine("  Lucro: " + lucro);
+            Console.WriteLine("  Pratos a ser cozinhados:");
+			Console.Write("  ");
+			imprimePratos(menu);
             Console.WriteLine(" ----------------- ");
         }
 

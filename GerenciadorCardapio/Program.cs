@@ -33,10 +33,16 @@ class Program {
 		List<CasosTeste> casosTesteDinamico = new List<CasosTeste>();
 
 		Console.WriteLine("\t\t\t\t------BEM VINDO AO SISTEMA DE GERENCIAMENTO DE CARDÁPIO------");
-		Console.WriteLine("\nAo informar os casos de teste, insira os dados nessa ordem:");
-		Console.WriteLine("\tNúmero de dias - Número de pratos - Orçamento\n");
-		Console.WriteLine("Os dados dos pratos devem ser informados nessa ordem:");
-		Console.WriteLine("\tCusto do prato - Lucro do prato");
+		Console.WriteLine("\nCasos de teste, insira os dados nessa ordem:");
+		Console.WriteLine("\tNúmero de dias  Número de pratos  Orçamento\n");
+		Console.WriteLine("\tNúmero de dias: (valores entre 1 e 21)");
+		Console.WriteLine("\tNúmero de pratos: (valores entre 1 e 50)");
+		Console.WriteLine("\tOrçamento: (valores entre 0 e 100)");
+		
+		Console.WriteLine("\nDados dos pratos devem ser informados nessa ordem:");
+		Console.WriteLine("\tCusto do prato  Lucro do prato");
+		Console.WriteLine("\n\tCusto: (valores entre 1 e 50)");
+		Console.WriteLine("\tLucro: (valores entre 1 e 10000)");
 
 		obterInformacoesPratos(casosTesteGuloso, casosTesteDinamico, 1);
 
